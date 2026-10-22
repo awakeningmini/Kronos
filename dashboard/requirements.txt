@@ -1,0 +1,23 @@
+# Install the CPU torch wheel before this file. See README. A torch already
+# in the environment that satisfies the pin is left as-is, so the CPU wheel
+# is not replaced by a CUDA build.
+torch>=2.9
+einops>=0.8.1
+# Pinned to the version the upstream Kronos package imports
+# (from huggingface_hub import PyTorchModelHubMixin). Do not bump without
+# checking that import.
+huggingface_hub==0.33.1
+safetensors>=0.4.2
+tqdm>=4.66
+
+streamlit>=1.50
+yfinance>=0.2.50
+pandas>=2.2
+numpy>=1.26
+scikit-learn>=1.4
+plotly>=5.20
+pytest>=8.0
+
+# Optional faster candle-pattern engine. Windows wheels exist for Python 3.14.
+# If install fails, delete this line; the dashboard uses its built-in detector.
+# TA-Lib>=0.6.5

@@ -1,0 +1,413 @@
+{
+  "disclaimer": "Personal research only. Not financial advice. Not a claim that either model will make money.",
+  "limitation": "Kronos is used as published. It is not walk-forward retrained. Its pretraining corpus may include historical bars of these same stocks, so a backtest that ends before the pretraining cutoff is not a clean out-of-sample test. The random forest is refit at every origin with a purge gap of one horizon. Kronos only sees that ticker's OHLCV. The random forest also sees SPY, QQQ, VIX, the 10-year yield, and the sector ETF when those downloads succeed. sample_count=1, so each Kronos number is one stochastic draw (seed 42 + origin index), not an average of many paths.",
+  "machine": {
+    "platform": "Linux-6.12.94+-x86_64-with-glibc2.39",
+    "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+    "torch": "2.14.1+cpu",
+    "cpu_count": 4,
+    "torch_threads": 4,
+    "device": "cpu"
+  },
+  "model": "mini",
+  "model_id": "NeoQuasar/Kronos-mini",
+  "tokenizer_id": "NeoQuasar/Kronos-Tokenizer-2k",
+  "model_load_seconds": 2.0723997820000477,
+  "setup": {
+    "horizon": 126,
+    "lookback": 256,
+    "max_origins": 3,
+    "step": 126,
+    "probes_seconds": {
+      "pred_len_21_lookback_256": 0.17160885700002382,
+      "pred_len_63_lookback_256": 0.4696586659999866,
+      "pred_len_126_lookback_256": 1.0102010980000387
+    },
+    "rule": "One Kronos-mini sample_count=1 forecast is timed on TSLA (lookback 256) before any accuracy is computed. If the 21-day forecast takes more than 25s, use horizon 10, lookback 128, 4 origins. Else time 63 days: if that takes more than 40s, use horizon 21 and 6 origins. Else time 126 days: if that takes more than 60s, use horizon 63 and 4 origins; otherwise use horizon 126 and 3 origins. step is always equal to horizon."
+  },
+  "start": "2012-01-01",
+  "tickers": [
+    "TSLA",
+    "AAPL"
+  ],
+  "rf_trees": 100,
+  "rf_min_train_rows": 750,
+  "rf_min_train_years": 3.0,
+  "market_context": true,
+  "sample_count": 1,
+  "seed": 42,
+  "warnings": [],
+  "per_ticker": {
+    "TSLA": {
+      "sector": {
+        "etf": "XLY",
+        "why": "auto: Yahoo sector 'Consumer Cyclical'"
+      },
+      "n_price_rows": 3723,
+      "price_start": "2012-01-03T00:00:00",
+      "price_end": "2026-10-22T00:00:00",
+      "n_features": 51,
+      "origins_requested": [
+        "2025-04-22T00:00:00",
+        "2025-10-21T00:00:00",
+        "2026-04-23T00:00:00"
+      ],
+      "rf_skipped": [],
+      "seconds_per_forecast": {
+        "n": 3,
+        "mean": 1.002254307333298,
+        "min": 0.9919909770000004,
+        "max": 1.0127097459999277
+      },
+      "summary": {
+        "n_paired": 3,
+        "first_origin": "2025-04-22T00:00:00",
+        "last_origin": "2026-04-23T00:00:00",
+        "kronos": {
+          "n": 3,
+          "direction_accuracy": 1.0,
+          "base_rate_always_up": 0.6666666666666666,
+          "beats_always_up": true,
+          "mae": 105.52183024088542,
+          "rmse": 105.84151565596372,
+          "avg_pct_error": 0.26640224547806907,
+          "mean_predicted_return": 0.10822260907880261,
+          "mean_actual_return": 0.2363005433192944
+        },
+        "random_forest": {
+          "n": 3,
+          "direction_accuracy": 0.3333333333333333,
+          "base_rate_always_up": 0.6666666666666666,
+          "beats_always_up": false,
+          "mae": 98.27016243173047,
+          "rmse": 101.24694798964288,
+          "avg_pct_error": 0.24456589227621742,
+          "mean_predicted_return": 0.18749083008855918,
+          "mean_actual_return": 0.2363005433192944,
+          "regressor_direction_accuracy": 0.6666666666666666
+        },
+        "naive_flat": {
+          "n": 3,
+          "direction_accuracy": 0.3333333333333333,
+          "base_rate_always_up": 0.6666666666666666,
+          "beats_always_up": false,
+          "mae": 91.74667358398438,
+          "rmse": 124.66072210739162,
+          "avg_pct_error": 0.21708438461129972,
+          "mean_predicted_return": 0.0,
+          "mean_actual_return": 0.2363005433192944
+        },
+        "kronos_closer_count": 1,
+        "random_forest_closer_count": 2,
+        "tie_count": 0,
+        "kronos_mae_minus_rf_mae": 7.251667809154952,
+        "kronos_avg_pct_error_minus_rf": 0.02183635320185165
+      },
+      "kronos_rows": [
+        {
+          "date": "2025-04-22T00:00:00.000",
+          "ticker": "TSLA",
+          "current_price": 237.9700012207,
+          "actual_future_price": 442.6000061035,
+          "actual_future_return": 0.8598983226,
+          "actual_direction": 1,
+          "predicted_price": 330.9580078125,
+          "predicted_return": 0.3907551629,
+          "prediction": 1,
+          "seconds": 1.012709746,
+          "target_date": "2025-10-21T00:00:00.000"
+        },
+        {
+          "date": "2025-10-21T00:00:00.000",
+          "ticker": "TSLA",
+          "current_price": 442.6000061035,
+          "actual_future_price": 373.7200012207,
+          "actual_future_return": -0.1556258562,
+          "actual_direction": 0,
+          "predicted_price": 279.8175964355,
+          "predicted_return": -0.3677867316,
+          "prediction": 0,
+          "seconds": 1.002062199,
+          "target_date": "2026-04-23T00:00:00.000"
+        },
+        {
+          "date": "2026-04-23T00:00:00.000",
+          "ticker": "TSLA",
+          "current_price": 373.7200012207,
+          "actual_future_price": 375.450012207,
+          "actual_future_return": 0.0046291635,
+          "actual_direction": 1,
+          "predicted_price": 486.4710998535,
+          "predicted_return": 0.301699396,
+          "prediction": 1,
+          "seconds": 0.991990977,
+          "target_date": "2026-10-22T00:00:00.000"
+        }
+      ],
+      "rf_rows": [
+        {
+          "date": "2025-04-22T00:00:00.000",
+          "ticker": "TSLA",
+          "current_price": 237.9700012207,
+          "actual_future_price": 442.6000061035,
+          "actual_future_return": 0.8598983226,
+          "actual_direction": 1,
+          "prob_up": 0.3514083131,
+          "prediction": 0,
+          "reg_prediction": 1,
+          "predicted_return": 0.3121779531,
+          "predicted_price": 312.2589891038,
+          "train_rows": 3020,
+          "train_last_target_date": "2025-04-22T00:00:00.000",
+          "target_date": "2025-10-21T00:00:00.000"
+        },
+        {
+          "date": "2025-10-21T00:00:00.000",
+          "ticker": "TSLA",
+          "current_price": 442.6000061035,
+          "actual_future_price": 373.7200012207,
+          "actual_future_return": -0.1556258562,
+          "actual_direction": 0,
+          "prob_up": 0.5141804365,
+          "prediction": 1,
+          "reg_prediction": 1,
+          "predicted_return": 0.0548693583,
+          "predicted_price": 466.8851844264,
+          "train_rows": 3146,
+          "train_last_target_date": "2025-10-21T00:00:00.000",
+          "target_date": "2026-04-23T00:00:00.000"
+        },
+        {
+          "date": "2026-04-23T00:00:00.000",
+          "ticker": "TSLA",
+          "current_price": 373.7200012207,
+          "actual_future_price": 375.450012207,
+          "actual_future_return": 0.0046291635,
+          "actual_direction": 1,
+          "prob_up": 0.767545161,
+          "prediction": 1,
+          "reg_prediction": 1,
+          "predicted_return": 0.1954251788,
+          "predicted_price": 446.7542992968,
+          "train_rows": 3272,
+          "train_last_target_date": "2026-04-23T00:00:00.000",
+          "target_date": "2026-10-22T00:00:00.000"
+        }
+      ]
+    },
+    "AAPL": {
+      "sector": {
+        "etf": "XLK",
+        "why": "auto: Yahoo sector 'Technology'"
+      },
+      "n_price_rows": 3723,
+      "price_start": "2012-01-03T00:00:00",
+      "price_end": "2026-10-22T00:00:00",
+      "n_features": 51,
+      "origins_requested": [
+        "2025-04-22T00:00:00",
+        "2025-10-21T00:00:00",
+        "2026-04-23T00:00:00"
+      ],
+      "rf_skipped": [],
+      "seconds_per_forecast": {
+        "n": 3,
+        "mean": 1.222609326000035,
+        "min": 0.9901514000000589,
+        "max": 1.665144248000047
+      },
+      "summary": {
+        "n_paired": 3,
+        "first_origin": "2025-04-22T00:00:00",
+        "last_origin": "2026-04-23T00:00:00",
+        "kronos": {
+          "n": 3,
+          "direction_accuracy": 0.3333333333333333,
+          "base_rate_always_up": 1.0,
+          "beats_always_up": false,
+          "mae": 64.4601542154948,
+          "rmse": 73.5961907482184,
+          "avg_pct_error": 0.20842501009499861,
+          "mean_predicted_return": -0.04018616906461644,
+          "mean_actual_return": 0.21081321996092983
+        },
+        "random_forest": {
+          "n": 3,
+          "direction_accuracy": 1.0,
+          "base_rate_always_up": 1.0,
+          "beats_always_up": false,
+          "mae": 34.6604385371438,
+          "rmse": 40.74147450545661,
+          "avg_pct_error": 0.11102059771744782,
+          "mean_predicted_return": 0.1890575533149362,
+          "mean_actual_return": 0.21081321996092983,
+          "regressor_direction_accuracy": 1.0
+        },
+        "naive_flat": {
+          "n": 3,
+          "direction_accuracy": 0.0,
+          "base_rate_always_up": 1.0,
+          "beats_always_up": false,
+          "mae": 49.473673502604164,
+          "rmse": 56.5818777701647,
+          "avg_pct_error": 0.1652743049497655,
+          "mean_predicted_return": 0.0,
+          "mean_actual_return": 0.21081321996092983
+        },
+        "kronos_closer_count": 0,
+        "random_forest_closer_count": 3,
+        "tie_count": 0,
+        "kronos_mae_minus_rf_mae": 29.799715678351,
+        "kronos_avg_pct_error_minus_rf": 0.09740441237755079
+      },
+      "kronos_rows": [
+        {
+          "date": "2025-04-22T00:00:00.000",
+          "ticker": "AAPL",
+          "current_price": 198.5189819336,
+          "actual_future_price": 261.8029174805,
+          "actual_future_return": 0.3187802745,
+          "actual_direction": 1,
+          "predicted_price": 235.7158813477,
+          "predicted_return": 0.1873720037,
+          "prediction": 1,
+          "seconds": 1.665144248,
+          "target_date": "2025-10-21T00:00:00.000"
+        },
+        {
+          "date": "2025-10-21T00:00:00.000",
+          "ticker": "AAPL",
+          "current_price": 261.8029174805,
+          "actual_future_price": 272.9429016113,
+          "actual_future_return": 0.0425510313,
+          "actual_direction": 1,
+          "predicted_price": 217.3596801758,
+          "predicted_return": -0.1697583729,
+          "prediction": 0,
+          "seconds": 1.01253233,
+          "target_date": "2026-04-23T00:00:00.000"
+        },
+        {
+          "date": "2026-04-23T00:00:00.000",
+          "ticker": "AAPL",
+          "current_price": 272.9429016113,
+          "actual_future_price": 346.9400024414,
+          "actual_future_return": 0.2711083541,
+          "actual_direction": 1,
+          "predicted_price": 235.2297973633,
+          "predicted_return": -0.1381721379,
+          "prediction": 0,
+          "seconds": 0.9901514,
+          "target_date": "2026-10-22T00:00:00.000"
+        }
+      ],
+      "rf_rows": [
+        {
+          "date": "2025-04-22T00:00:00.000",
+          "ticker": "AAPL",
+          "current_price": 198.5189819336,
+          "actual_future_price": 261.8029174805,
+          "actual_future_return": 0.3187802745,
+          "actual_direction": 1,
+          "prob_up": 0.7797779811,
+          "prediction": 1,
+          "reg_prediction": 1,
+          "predicted_return": 0.3865287754,
+          "predicted_price": 275.2522809094,
+          "train_rows": 3020,
+          "train_last_target_date": "2025-04-22T00:00:00.000",
+          "target_date": "2025-10-21T00:00:00.000"
+        },
+        {
+          "date": "2025-10-21T00:00:00.000",
+          "ticker": "AAPL",
+          "current_price": 261.8029174805,
+          "actual_future_price": 272.9429016113,
+          "actual_future_return": 0.0425510313,
+          "actual_direction": 1,
+          "prob_up": 0.8313208743,
+          "prediction": 1,
+          "reg_prediction": 1,
+          "predicted_return": 0.1439568085,
+          "predicted_price": 299.491229947,
+          "train_rows": 3146,
+          "train_last_target_date": "2025-10-21T00:00:00.000",
+          "target_date": "2026-04-23T00:00:00.000"
+        },
+        {
+          "date": "2026-04-23T00:00:00.000",
+          "ticker": "AAPL",
+          "current_price": 272.9429016113,
+          "actual_future_price": 346.9400024414,
+          "actual_future_return": 0.2711083541,
+          "actual_direction": 1,
+          "prob_up": 0.6136768378,
+          "prediction": 1,
+          "reg_prediction": 1,
+          "predicted_return": 0.036687076,
+          "predicted_price": 282.9563785946,
+          "train_rows": 3272,
+          "train_last_target_date": "2026-04-23T00:00:00.000",
+          "target_date": "2026-10-22T00:00:00.000"
+        }
+      ]
+    }
+  },
+  "combined": {
+    "n_paired": 6,
+    "first_origin": "2025-04-22T00:00:00",
+    "last_origin": "2026-04-23T00:00:00",
+    "kronos": {
+      "n": 6,
+      "direction_accuracy": 0.6666666666666666,
+      "base_rate_always_up": 0.8333333333333334,
+      "beats_always_up": false,
+      "mae": 84.99099222819011,
+      "rmse": 91.15598095846416,
+      "avg_pct_error": 0.23741362778653385,
+      "mean_predicted_return": 0.03401822000709309,
+      "mean_actual_return": 0.22355688164011212
+    },
+    "random_forest": {
+      "n": 6,
+      "direction_accuracy": 0.6666666666666666,
+      "base_rate_always_up": 0.8333333333333334,
+      "beats_always_up": false,
+      "mae": 66.46530048443714,
+      "rmse": 77.17127775959207,
+      "avg_pct_error": 0.1777932449968326,
+      "mean_predicted_return": 0.18827419170174767,
+      "mean_actual_return": 0.22355688164011212,
+      "regressor_direction_accuracy": 0.8333333333333334
+    },
+    "naive_flat": {
+      "n": 6,
+      "direction_accuracy": 0.16666666666666666,
+      "base_rate_always_up": 0.8333333333333334,
+      "beats_always_up": false,
+      "mae": 70.61017354329427,
+      "rmse": 96.8034207255461,
+      "avg_pct_error": 0.19117934478053264,
+      "mean_predicted_return": 0.0,
+      "mean_actual_return": 0.22355688164011212
+    },
+    "kronos_closer_count": 1,
+    "random_forest_closer_count": 5,
+    "tie_count": 0,
+    "kronos_mae_minus_rf_mae": 18.525691743752972,
+    "kronos_avg_pct_error_minus_rf": 0.05962038278970125
+  },
+  "speed": {
+    "note": "Measured on this machine, not on the owner's Windows PC.",
+    "aapl_latest_one_path_seconds": 1.0174224630000026,
+    "aapl_latest_one_path_inner_seconds": 1.0138728519999631,
+    "aapl_latest_four_path_band_seconds": 4.089687998999921,
+    "aapl_band_as_of": "2026-10-22T00:00:00",
+    "aapl_band_terminal_mean": 286.75257873535156,
+    "aapl_band_terminal_p10": 273.6156524658203,
+    "aapl_band_terminal_p90": 302.8428009033203,
+    "aapl_band_up_rate": 0.0,
+    "aapl_band_current_price": 346.93499755859375,
+    "aapl_one_path_terminal": 288.179443359375
+  }
+}
