@@ -9,6 +9,7 @@ From the dashboard folder:
 """
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import platform
@@ -119,6 +120,14 @@ def _download_market(start: str):
 
 
 def main():
+    ap = argparse.ArgumentParser(description="Kronos vs random-forest walk-forward on TSLA and AAPL.")
+    ap.add_argument(
+        "--max-origins", type=int, default=None,
+        help="Override the timing rule's origin count. Horizon and lookback still come from the rule.",
+    )
+    ap.add_argument("--output", type=Path, default=RESULTS)
+    args = ap.parse_args()
+
     tickers = ["TSLA", "AAPL"]
     start = "2012-01-01"
     model_key = "mini"
@@ -131,6 +140,9 @@ def main():
     print("downloading TSLA for the timing probe", flush=True)
     tsla = D.download_prices("TSLA", start)
     setup = choose_horizon(predictor, PR.prices_to_kronos(tsla))
+    if args.max_origins is not None:
+        setup["max_origins"] = int(args.max_origins)
+        setup["max_origins_note"] = "Override of the timing rule's origin count. Horizon was not changed."
 
     market_feats, warnings = _download_market(start)
     per_ticker = {}
@@ -266,9 +278,9 @@ def main():
             "aapl_one_path_terminal": one["terminal_mean"],
         },
     }
-    RESULTS.parent.mkdir(parents=True, exist_ok=True)
-    RESULTS.write_text(json.dumps(_jsonable(payload), indent=2), encoding="utf-8")
-    print(f"wrote {RESULTS}", flush=True)
+    args.output.parent.mkdir(parents=True, exist_ok=True)
+    args.output.write_text(json.dumps(_jsonable(payload), indent=2), encoding="utf-8")
+    print(f"wrote {args.output}", flush=True)
 
 
 if __name__ == "__main__":

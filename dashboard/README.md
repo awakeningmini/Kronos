@@ -122,6 +122,66 @@ the upstream `predict` method averages samples internally and does not return th
 | `tests/` | Data-prep and backtest tests (offline) |
 | `tickers.json` | Saved ticker list |
 
+## Measured on the build machine (2026-10-22)
+
+These numbers are copied from the JSON files produced by `run_short_backtest.py`.
+They are not a forecast of your Windows PC and they are not financial advice.
+Machine: Linux, 4 CPU cores, CPython 3.12.3, torch 2.14.1+cpu, Kronos-mini,
+lookback 256, horizon 126 trading days, `sample_count=1`, seed 42. The random
+forest had 100 trees, at least 750 purged rows, 3 years of warm-up, and market
+context (TSLA sector ETF XLY, AAPL sector ETF XLK).
+
+CPU time for one 126-day forecast was about **1.0 second** (TSLA origins in
+`results/short_backtest.json` averaged 1.00s, range 0.99–1.01s). A 4-path
+uncertainty band on the latest AAPL bars took **4.09 seconds**. Loading mini
+took about **2.1 seconds** once the weights were cached. A 21-day probe took
+0.17s and a 63-day probe took 0.47s, which is why the timing rule locked the
+horizon at 126.
+
+### Three origins (the timing rule)
+
+`results/short_backtest.json`. Origins 2025-04-22, 2025-10-21, 2026-04-23.
+The last target date is 2026-10-22, the same day the file was written, so that
+bar may be an unfinished session.
+
+| | Kronos MAE | Forest MAE | Flat MAE | Kronos up/down | Forest classifier | Always-up rate |
+|---|---:|---:|---:|---:|---:|---:|
+| TSLA (n=3) | $105.52 | $98.27 | $91.75 | 100% | 33% | 67% |
+| AAPL (n=3) | $64.46 | $34.66 | $49.47 | 33% | 100% | 100% |
+| Both (n=6) | $84.99 | $66.47 | $70.61 | 67% | 67% | 83% |
+
+"Forest classifier" is P(up) ≥ 0.5. The price MAE uses the forest's return
+model, whose sign was right on 67% of TSLA origins, 100% of AAPL origins, and
+83% pooled (the same as the always-up rate). On these six forecasts the forest
+was closer on 5 origins and Kronos on 1. Pooled average absolute percent error
+was 23.7% (Kronos), 17.8% (forest), 19.1% (flat). Neither up/down call beat
+the always-up rate on the pooled set.
+
+### Eight origins (follow-up, same horizon)
+
+`results/longer_backtest.json`. Same settings, origin count raised to 8 after
+the short run showed each forecast cost about a second. Origins run from
+2022-10-14 through 2026-04-23 (16 forecasts). This was not the pre-registered
+count.
+
+| | Kronos MAE | Forest MAE | Flat MAE | Kronos up/down | Forest classifier | Always-up rate |
+|---|---:|---:|---:|---:|---:|---:|
+| TSLA (n=8) | $61.04 | $77.81 | $69.95 | 75% | 50% | 62.5% |
+| AAPL (n=8) | $35.29 | $32.86 | $36.76 | 75% | 75% | 75% |
+| Both (n=16) | $48.16 | $55.34 | $53.35 | 75% | 62.5% | 68.8% |
+
+Closer-origin count was 8–8. Kronos had the lower pooled MAE. The forest was
+slightly closer on AAPL. The forest return-sign hit rate was 62.5% on TSLA
+(equal to always-up), 75% on AAPL (equal to always-up), and 68.8% pooled
+(equal to always-up). Kronos up/down beat the always-up rate on TSLA and on
+the pooled set. On AAPL both models matched that rate.
+
+Read both tables together. Three recent windows favor the forest. Eight windows
+favor Kronos on TSLA and leave AAPL roughly tied. Sixteen non-overlapping
+six-month draws, one Kronos sample each, is still a small test, and Kronos may
+have seen 2022–2025 bars in pretraining. It does not justify retiring the
+random forest.
+
 ## Troubleshooting
 
 - **`py` is not recognized.** Re-run the Python installer and tick Add to PATH.
